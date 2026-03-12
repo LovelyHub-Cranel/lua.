@@ -11,7 +11,7 @@
 ]]
 
 if debugX then
-	warn('Initialising Rayfield')
+	warn('Initialising Lovely')
 end
 
 local function getService(name)
@@ -135,7 +135,7 @@ local function callSafely(func, ...)
 	if func then
 		local success, result = pcall(func, ...)
 		if not success then
-			warn("Rayfield | Function failed with error: ", result)
+			warn("Lovely | Function failed with error: ", result)
 			return false
 		else
 			return result
@@ -3786,11 +3786,11 @@ if useStudio then
 
 
 	--local Window = RayfieldLibrary:CreateWindow({
-	--	Name = "Rayfield Example Window",
-	--	LoadingTitle = "Rayfield Interface Suite",
+	--	Name = "Lovely Example Window",
+	--	LoadingTitle = "Lovely",
 	--	Theme = 'Default',
 	--	Icon = 0,
-	--	LoadingSubtitle = "by Sirius",
+	--	LoadingSubtitle = "by Cranel",
 	--	ConfigurationSaving = {
 	--		Enabled = true,
 	--		FolderName = nil, -- Create a custom folder for your hub/game
