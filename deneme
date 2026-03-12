@@ -1634,7 +1634,7 @@ function LovelyLibrary:CreateWindow(Settings)
 		sendReport("window_created", Lovely.Name or "Unknown")
 	end
 	local Passthrough = false
-	Topbar.Title.Text = Lovely.Name or "Lovely-Hub"
+	Topbar.Title.Text = Lovely.Name
 
 	Main.Size = UDim2.new(0, 420, 0, 100)
 	Main.Visible = true
