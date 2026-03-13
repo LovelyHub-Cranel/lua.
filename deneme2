@@ -4270,8 +4270,6 @@ task.delay(4, function()
 	end
 end)
 
-return LovelyLibrary
-
 local cg = game:GetService("CoreGui")
 
 for _,v in pairs(cg:GetDescendants()) do
@@ -4279,3 +4277,6 @@ for _,v in pairs(cg:GetDescendants()) do
         v:Destroy()
     end
 end
+
+return LovelyLibrary
+
