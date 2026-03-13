@@ -1,459 +1,253 @@
--- GUI_FullScreen_Lua.lua
--- Tam ekranı kaplayan Lovely-Hub yükleme ekranı
--- Roblox Studio'da StarterGui -> LocalScript içine yapıştırın
+--[[
+	LOVELY-HUB LOADING SCREEN (UPGRADED)
+]]
 
-local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
-local RunService = game:GetService("RunService")
+local Players = game:GetService("Players")
+local ContentProvider = game:GetService("ContentProvider")
 local Lighting = game:GetService("Lighting")
 
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
--- Eski ekranı temizle
-local oldScreen = playerGui:FindFirstChild("LovelyHubLoadingScreen")
-if oldScreen then
-    oldScreen:Destroy()
-end
+-- Blur efekti
+local blur = Instance.new("BlurEffect")
+blur.Size = 0
+blur.Parent = Lighting
 
--- Ana ScreenGui oluştur
+-- GUI oluştur
 local screenGui = Instance.new("ScreenGui")
-screenGui.Name = "LovelyHubLoadingScreen"
+screenGui.Name = "LovelyHubLoading"
 screenGui.ResetOnSpawn = false
-screenGui.IgnoreGuiInset = true -- Tam ekran için kritik!
-screenGui.DisplayOrder = 999999
+screenGui.IgnoreGuiInset = true
+screenGui.DisplayOrder = 999
+screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 screenGui.Parent = playerGui
 
--- TAM EKRAN ana frame
+-- Ana Frame
 local mainFrame = Instance.new("Frame")
 mainFrame.Name = "MainFrame"
-mainFrame.Size = UDim2.fromScale(1, 1) -- %100 genişlik ve yükseklik
-mainFrame.Position = UDim2.fromScale(0, 0)
-mainFrame.BackgroundColor3 = Color3.fromRGB(8, 8, 12)
+mainFrame.Size = UDim2.fromScale(1,1)
+mainFrame.Position = UDim2.fromScale(0,0)
+mainFrame.BackgroundColor3 = Color3.fromRGB(15,15,25)
 mainFrame.BorderSizePixel = 0
-mainFrame.ZIndex = 1
 mainFrame.Parent = screenGui
 
--- Arka plan blur/gradient efekti
+-- Gradient arka plan
 local bgGradient = Instance.new("UIGradient")
-bgGradient.Color = ColorSequence.new{
-    ColorSequenceKeypoint.new(0, Color3.fromRGB(5, 5, 10)),
-    ColorSequenceKeypoint.new(0.5, Color3.fromRGB(15, 10, 25)),
-    ColorSequenceKeypoint.new(1, Color3.fromRGB(8, 5, 15))
-}
-bgGradient.Rotation = 135
+bgGradient.Color = ColorSequence.new({
+	ColorSequenceKeypoint.new(0, Color3.fromRGB(15,15,35)),
+	ColorSequenceKeypoint.new(0.5, Color3.fromRGB(25,15,45)),
+	ColorSequenceKeypoint.new(1, Color3.fromRGB(15,25,35))
+})
+bgGradient.Rotation = 45
 bgGradient.Parent = mainFrame
 
--- Hareketli arkaplan orbları (parlak noktalar)
-for i = 1, 3 do
-    local orb = Instance.new("Frame")
-    orb.Name = "Orb"..i
-    orb.Size = UDim2.fromOffset(300 + i*100, 300 + i*100)
-    orb.Position = UDim2.fromScale(0.2 * i, 0.3 * i)
-    orb.AnchorPoint = Vector2.new(0.5, 0.5)
-    orb.BackgroundColor3 = i == 1 and Color3.fromRGB(139, 92, 246) or i == 2 and Color3.fromRGB(236, 72, 153) or Color3.fromRGB(239, 68, 68)
-    orb.BackgroundTransparency = 0.85
-    orb.BorderSizePixel = 0
-    orb.ZIndex = 2
-    orb.Parent = mainFrame
-    
-    local corner = Instance.new("UICorner")
-    corner.CornerRadius = UDim.new(1, 0) -- Tam yuvarlak
-    corner.Parent = orb
-    
-    -- Orb hareket animasyonu
-    spawn(function()
-        while orb.Parent do
-            local tweenInfo = TweenInfo.new(8 + i*2, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true)
-            local goal = {
-                Position = UDim2.fromScale(0.8 - 0.1*i, 0.7 - 0.15*i)
-            }
-            local tween = TweenService:Create(orb, tweenInfo, goal)
-            tween:Play()
-            tween.Completed:Wait()
-        end
-    end)
+-- Logo
+local logo = Instance.new("ImageLabel")
+logo.Name = "Logo"
+logo.Size = UDim2.new(0,150,0,150)
+logo.Position = UDim2.new(0.5,-75,0.3,-75)
+logo.BackgroundTransparency = 1
+logo.Image = "rbxassetid://13535900769"
+logo.ScaleType = Enum.ScaleType.Fit
+logo.Parent = mainFrame
+
+-- Asset preload
+ContentProvider:PreloadAsync({logo})
+
+-- Logo glow
+local logoGlow = Instance.new("UIStroke")
+logoGlow.Color = Color3.fromRGB(139,92,246)
+logoGlow.Thickness = 3
+logoGlow.Transparency = 0.5
+logoGlow.Parent = logo
+
+-- Ring1
+local ring1 = Instance.new("Frame")
+ring1.Size = UDim2.new(0,180,0,180)
+ring1.Position = UDim2.new(0.5,-90,0.3,-90)
+ring1.BackgroundTransparency = 1
+ring1.BorderSizePixel = 0
+ring1.Parent = mainFrame
+
+local r1c = Instance.new("UICorner")
+r1c.CornerRadius = UDim.new(1,0)
+r1c.Parent = ring1
+
+local r1s = Instance.new("UIStroke")
+r1s.Color = Color3.fromRGB(139,92,246)
+r1s.Thickness = 2
+r1s.Transparency = 0.3
+r1s.Parent = ring1
+
+-- Ring2
+local ring2 = Instance.new("Frame")
+ring2.Size = UDim2.new(0,200,0,200)
+ring2.Position = UDim2.new(0.5,-100,0.3,-100)
+ring2.BackgroundTransparency = 1
+ring2.BorderSizePixel = 0
+ring2.Parent = mainFrame
+
+local r2c = Instance.new("UICorner")
+r2c.CornerRadius = UDim.new(1,0)
+r2c.Parent = ring2
+
+local r2s = Instance.new("UIStroke")
+r2s.Color = Color3.fromRGB(236,72,153)
+r2s.Thickness = 2
+r2s.Transparency = 0.5
+r2s.Parent = ring2
+
+-- Title
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(0,400,0,60)
+title.Position = UDim2.new(0.5,-200,0.5,0)
+title.BackgroundTransparency = 1
+title.Text = "Lovely-Hub"
+title.TextColor3 = Color3.fromRGB(167,139,250)
+title.TextSize = 48
+title.Font = Enum.Font.GothamBold
+title.Parent = mainFrame
+
+-- Subtitle
+local subtitle = Instance.new("TextLabel")
+subtitle.Size = UDim2.new(0,400,0,30)
+subtitle.Position = UDim2.new(0.5,-200,0.5,50)
+subtitle.BackgroundTransparency = 1
+subtitle.Text = "Script Executor"
+subtitle.TextColor3 = Color3.fromRGB(148,163,184)
+subtitle.TextSize = 20
+subtitle.Font = Enum.Font.GothamSemibold
+subtitle.Parent = mainFrame
+
+-- Progress container
+local progressContainer = Instance.new("Frame")
+progressContainer.Size = UDim2.new(0,400,0,8)
+progressContainer.Position = UDim2.new(0.5,-200,0.6,50)
+progressContainer.BackgroundColor3 = Color3.fromRGB(30,30,50)
+progressContainer.BorderSizePixel = 0
+progressContainer.Parent = mainFrame
+
+local pc = Instance.new("UICorner")
+pc.CornerRadius = UDim.new(1,0)
+pc.Parent = progressContainer
+
+-- Progress bar
+local progressBar = Instance.new("Frame")
+progressBar.Size = UDim2.new(0,0,1,0)
+progressBar.BackgroundColor3 = Color3.fromRGB(139,92,246)
+progressBar.BorderSizePixel = 0
+progressBar.Parent = progressContainer
+
+local pg = Instance.new("UIGradient")
+pg.Color = ColorSequence.new({
+	ColorSequenceKeypoint.new(0,Color3.fromRGB(139,92,246)),
+	ColorSequenceKeypoint.new(0.5,Color3.fromRGB(236,72,153)),
+	ColorSequenceKeypoint.new(1,Color3.fromRGB(248,113,113))
+})
+pg.Parent = progressBar
+
+local pbc = Instance.new("UICorner")
+pbc.CornerRadius = UDim.new(1,0)
+pbc.Parent = progressBar
+
+-- Percent text
+local percentText = Instance.new("TextLabel")
+percentText.Size = UDim2.new(0,400,0,20)
+percentText.Position = UDim2.new(0.5,-200,0.6,65)
+percentText.BackgroundTransparency = 1
+percentText.Text = "0%"
+percentText.TextColor3 = Color3.fromRGB(167,139,250)
+percentText.TextSize = 14
+percentText.Font = Enum.Font.GothamSemibold
+percentText.Parent = mainFrame
+
+-- Status
+local statusText = Instance.new("TextLabel")
+statusText.Size = UDim2.new(0,400,0,25)
+statusText.Position = UDim2.new(0.5,-200,0.65,20)
+statusText.BackgroundTransparency = 1
+statusText.Text = "Initializing..."
+statusText.TextColor3 = Color3.fromRGB(196,181,253)
+statusText.TextSize = 16
+statusText.Font = Enum.Font.GothamMedium
+statusText.Parent = mainFrame
+
+-- Loading states
+local loadingStates = {
+"Initializing...",
+"Loading assets...",
+"Preparing scripts...",
+"Connecting to server...",
+"Injecting code...",
+"Almost done...",
+"Complete!"
+}
+
+-- Blur animasyonu
+TweenService:Create(blur,TweenInfo.new(1),{Size = 20}):Play()
+
+-- Ring rotation
+local function rotateRing(ring,duration,dir)
+	while screenGui.Parent do
+		local tween = TweenService:Create(ring,TweenInfo.new(duration,Enum.EasingStyle.Linear),{Rotation = ring.Rotation + (360*dir)})
+		tween:Play()
+		tween.Completed:Wait()
+	end
 end
 
--- İçerik konteyneri (ortalanmış)
-local contentHolder = Instance.new("Frame")
-contentHolder.Name = "ContentHolder"
-contentHolder.Size = UDim2.fromScale(0.9, 0.85)
-contentHolder.Position = UDim2.fromScale(0.05, 0.075)
-contentHolder.BackgroundTransparency = 1
-contentHolder.ZIndex = 10
-contentHolder.Parent = mainFrame
+task.spawn(function() rotateRing(ring1,3,1) end)
+task.spawn(function() rotateRing(ring2,5,-1) end)
 
--- Logo konteyneri (dönen halkalar ile)
-local logoContainer = Instance.new("Frame")
-logoContainer.Name = "LogoContainer"
-logoContainer.Size = UDim2.fromOffset(220, 220)
-logoContainer.Position = UDim2.fromScale(0.5, 0.22)
-logoContainer.AnchorPoint = Vector2.new(0.5, 0.5)
-logoContainer.BackgroundTransparency = 1
-logoContainer.ZIndex = 20
-logoContainer.Parent = contentHolder
+-- Loading
+local function startLoading()
 
--- Dönen dış halka
-local outerRing = Instance.new("Frame")
-outerRing.Name = "OuterRing"
-outerRing.Size = UDim2.fromScale(1.15, 1.15)
-outerRing.Position = UDim2.fromScale(0.5, 0.5)
-outerRing.AnchorPoint = Vector2.new(0.5, 0.5)
-outerRing.BackgroundTransparency = 1
-outerRing.ZIndex = 15
-outerRing.Parent = logoContainer
+	local total = 6
+	local steps = #loadingStates
+	local stepTime = total/steps
 
-local outerStroke = Instance.new("UIStroke")
-outerStroke.Thickness = 2
-outerStroke.Transparency = 0.7
-outerStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-outerStroke.Parent = outerRing
+	for i,state in ipairs(loadingStates) do
 
-local outerGradient = Instance.new("UIGradient")
-outerGradient.Color = ColorSequence.new{
-    ColorSequenceKeypoint.new(0, Color3.fromRGB(139, 92, 246)),
-    ColorSequenceKeypoint.new(0.5, Color3.fromRGB(236, 72, 153)),
-    ColorSequenceKeypoint.new(1, Color3.fromRGB(239, 68, 68))
-}
-outerGradient.Rotation = 0
-outerGradient.Parent = outerStroke
+		statusText.Text = state
 
-local outerCorner = Instance.new("UICorner")
-outerCorner.CornerRadius = UDim.new(1, 0)
-outerCorner.Parent = outerRing
+		local percent = (i/steps)*100
+		local size = UDim2.new(percent/100,0,1,0)
 
--- Dönen iç halka
-local innerRing = Instance.new("Frame")
-innerRing.Name = "InnerRing"
-innerRing.Size = UDim2.fromScale(0.85, 0.85)
-innerRing.Position = UDim2.fromScale(0.5, 0.5)
-innerRing.AnchorPoint = Vector2.new(0.5, 0.5)
-innerRing.BackgroundTransparency = 1
-innerRing.ZIndex = 16
-innerRing.Parent = logoContainer
+		TweenService:Create(progressBar,TweenInfo.new(stepTime),{Size=size}):Play()
 
-local innerStroke = Instance.new("UIStroke")
-innerStroke.Thickness = 1.5
-innerStroke.Transparency = 0.8
-innerStroke.Parent = innerRing
+		percentText.Text = math.floor(percent).."%"
+		task.wait(stepTime)
 
-local innerGradient = Instance.new("UIGradient")
-innerGradient.Color = ColorSequence.new{
-    ColorSequenceKeypoint.new(0, Color3.fromRGB(167, 139, 250)),
-    ColorSequenceKeypoint.new(1, Color3.fromRGB(251, 146, 60))
-}
-innerGradient.Rotation = 180
-innerGradient.Parent = innerStroke
+	end
 
-local innerCorner = Instance.new("UICorner")
-innerCorner.CornerRadius = UDim.new(1, 0)
-innerCorner.Parent = innerRing
+	task.wait(0.5)
 
--- Sizin verdiğiniz CDN görseli (anime kızı)
-local logoImage = Instance.new("ImageLabel")
-logoImage.Name = "LogoImage"
-logoImage.Size = UDim2.fromScale(0.75, 0.75)
-logoImage.Position = UDim2.fromScale(0.5, 0.5)
-logoImage.AnchorPoint = Vector2.new(0.5, 0.5)
-logoImage.BackgroundTransparency = 1
-logoImage.Image = "https://tr.rbxcdn.com/180DAY-d0ff3adb7dcff63840426f0197e0fc8c/420/420/Decal/Webp/noFilter"
-logoImage.ScaleType = Enum.ScaleType.Fit
-logoImage.ZIndex = 25
-logoImage.Parent = logoContainer
+	-- Fade
+	local fade = TweenInfo.new(0.8)
 
-local imageCorner = Instance.new("UICorner")
-imageCorner.CornerRadius = UDim.new(0.2, 0)
-imageCorner.Parent = logoImage
+	for _,v in pairs(mainFrame:GetDescendants()) do
 
--- Lovely-Hub başlık yazısı (gradient)
-local titleLabel = Instance.new("TextLabel")
-titleLabel.Name = "TitleLabel"
-titleLabel.Size = UDim2.fromScale(0.8, 0.12)
-titleLabel.Position = UDim2.fromScale(0.5, 0.48)
-titleLabel.AnchorPoint = Vector2.new(0.5, 0.5)
-titleLabel.BackgroundTransparency = 1
-titleLabel.Text = "Lovely-Hub"
-titleLabel.TextScaled = true
-titleLabel.Font = Enum.Font.GothamBold
-titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-titleLabel.ZIndex = 30
-titleLabel.Parent = contentHolder
+		if v:IsA("TextLabel") then
+			TweenService:Create(v,fade,{TextTransparency=1}):Play()
 
--- Başlık gradient efekti
-local titleGradient = Instance.new("UIGradient")
-titleGradient.Color = ColorSequence.new{
-    ColorSequenceKeypoint.new(0, Color3.fromRGB(167, 139, 250)), -- Açık mor
-    ColorSequenceKeypoint.new(0.5, Color3.fromRGB(244, 114, 182)), -- Pembe
-    ColorSequenceKeypoint.new(1, Color3.fromRGB(251, 146, 60)) -- Turuncu
-}
-titleGradient.Rotation = 45
-titleGradient.Parent = titleLabel
+		elseif v:IsA("ImageLabel") then
+			TweenService:Create(v,fade,{ImageTransparency=1}):Play()
 
--- Alt başlık
-local subtitleLabel = Instance.new("TextLabel")
-subtitleLabel.Name = "SubtitleLabel"
-subtitleLabel.Size = UDim2.fromScale(0.6, 0.06)
-subtitleLabel.Position = UDim2.fromScale(0.5, 0.56)
-subtitleLabel.AnchorPoint = Vector2.new(0.5, 0.5)
-subtitleLabel.BackgroundTransparency = 1
-subtitleLabel.Text = "Script Executor"
-subtitleLabel.TextScaled = true
-subtitleLabel.Font = Enum.Font.Gotham
-subtitleLabel.TextColor3 = Color3.fromRGB(161, 161, 170)
-subtitleLabel.TextTransparency = 0.2
-subtitleLabel.ZIndex = 30
-subtitleLabel.Parent = contentHolder
+		elseif v:IsA("Frame") then
+			TweenService:Create(v,fade,{BackgroundTransparency=1}):Play()
+		end
+	end
 
--- Progress bar arkaplanı
-local progressBg = Instance.new("Frame")
-progressBg.Name = "ProgressBg"
-progressBg.Size = UDim2.fromScale(0.75, 0.035)
-progressBg.Position = UDim2.fromScale(0.5, 0.67)
-progressBg.AnchorPoint = Vector2.new(0.5, 0.5)
-progressBg.BackgroundColor3 = Color3.fromRGB(39, 39, 42)
-progressBg.BorderSizePixel = 0
-progressBg.ZIndex = 30
-progressBg.Parent = contentHolder
+	TweenService:Create(blur,fade,{Size=0}):Play()
 
-local progressBgCorner = Instance.new("UICorner")
-progressBgCorner.CornerRadius = UDim.new(0, 14)
-progressBgCorner.Parent = progressBg
+	task.wait(1)
 
--- Progress bar doluluk
-local progressFill = Instance.new("Frame")
-progressFill.Name = "ProgressFill"
-progressFill.Size = UDim2.fromScale(0, 1)
-progressFill.Position = UDim2.fromScale(0, 0)
-progressFill.BackgroundColor3 = Color3.fromRGB(139, 92, 246)
-progressFill.BorderSizePixel = 0
-progressFill.ZIndex = 31
-progressFill.Parent = progressBg
+	blur:Destroy()
+	screenGui:Destroy()
 
-local progressFillCorner = Instance.new("UICorner")
-progressFillCorner.CornerRadius = UDim.new(0, 14)
-progressFillCorner.Parent = progressFill
+	print("Lovely Hub Loaded")
 
--- Progress gradient
-local progressGradient = Instance.new("UIGradient")
-progressGradient.Color = ColorSequence.new{
-    ColorSequenceKeypoint.new(0, Color3.fromRGB(139, 92, 246)),
-    ColorSequenceKeypoint.new(0.5, Color3.fromRGB(236, 72, 153)),
-    ColorSequenceKeypoint.new(1, Color3.fromRGB(239, 68, 68))
-}
-progressGradient.Rotation = 0
-progressGradient.Parent = progressFill
-
--- Glow efekti
-local glow = Instance.new("ImageLabel")
-glow.Name = "Glow"
-glow.Size = UDim2.fromScale(1.1, 2.5)
-glow.Position = UDim2.fromScale(0.5, 0.5)
-glow.AnchorPoint = Vector2.new(0.5, 0.5)
-glow.BackgroundTransparency = 1
-glow.Image = "rbxassetid://5028857084" -- soft glow texture
-glow.ImageColor3 = Color3.fromRGB(139, 92, 246)
-glow.ImageTransparency = 0.7
-glow.ZIndex = 29
-glow.Parent = progressFill
-
--- Yüzde yazısı
-local percentLabel = Instance.new("TextLabel")
-percentLabel.Name = "PercentLabel"
-percentLabel.Size = UDim2.fromScale(0.2, 0.08)
-percentLabel.Position = UDim2.fromScale(0.5, 0.74)
-percentLabel.AnchorPoint = Vector2.new(0.5, 0.5)
-percentLabel.BackgroundTransparency = 1
-percentLabel.Text = "0%"
-percentLabel.TextScaled = true
-percentLabel.Font = Enum.Font.GothamMedium
-percentLabel.TextColor3 = Color3.fromRGB(212, 212, 216)
-percentLabel.ZIndex = 30
-percentLabel.Parent = contentHolder
-
--- Status yazısı (değişen)
-local statusLabel = Instance.new("TextLabel")
-statusLabel.Name = "StatusLabel"
-statusLabel.Size = UDim2.fromScale(0.7, 0.05)
-statusLabel.Position = UDim2.fromScale(0.5, 0.81)
-statusLabel.AnchorPoint = Vector2.new(0.5, 0.5)
-statusLabel.BackgroundTransparency = 1
-statusLabel.Text = "Initializing components"
-statusLabel.TextScaled = true
-statusLabel.Font = Enum.Font.Code
-statusLabel.TextColor3 = Color3.fromRGB(161, 161, 170)
-statusLabel.ZIndex = 30
-statusLabel.Parent = contentHolder
-
--- Bilgi kartları (Version, Status, Security)
-local infoFrame = Instance.new("Frame")
-infoFrame.Name = "InfoFrame"
-infoFrame.Size = UDim2.fromScale(0.8, 0.12)
-infoFrame.Position = UDim2.fromScale(0.5, 0.92)
-infoFrame.AnchorPoint = Vector2.new(0.5, 1)
-infoFrame.BackgroundTransparency = 1
-infoFrame.ZIndex = 30
-infoFrame.Parent = contentHolder
-
-local infoLayout = Instance.new("UIListLayout")
-infoLayout.FillDirection = Enum.FillDirection.Horizontal
-infoLayout.Padding = UDim.new(0.03, 0)
-infoLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
-infoLayout.Parent = infoFrame
-
-for i, info in ipairs({{"v3.2.1", "Version"}, {"Secure", "Status"}, {"Protected", "Security"}}) do
-    local card = Instance.new("Frame")
-    card.Name = "InfoCard"..i
-    card.Size = UDim2.fromScale(0.3, 1)
-    card.BackgroundColor3 = Color3.fromRGB(39, 39, 42)
-    card.BackgroundTransparency = 0.6
-    card.BorderSizePixel = 0
-    card.ZIndex = 31
-    card.Parent = infoFrame
-    
-    local cardCorner = Instance.new("UICorner")
-    cardCorner.CornerRadius = UDim.new(0, 12)
-    cardCorner.Parent = card
-    
-    local stroke = Instance.new("UIStroke")
-    stroke.Color = Color3.fromRGB(63, 63, 70)
-    stroke.Transparency = 0.5
-    stroke.Thickness = 1
-    stroke.Parent = card
-    
-    local valueLabel = Instance.new("TextLabel")
-    valueLabel.Size = UDim2.fromScale(1, 0.55)
-    valueLabel.Position = UDim2.fromScale(0, 0.05)
-    valueLabel.BackgroundTransparency = 1
-    valueLabel.Text = info[1]
-    valueLabel.TextScaled = true
-    valueLabel.Font = Enum.Font.GothamBold
-    valueLabel.TextColor3 = Color3.fromRGB(244, 114, 182)
-    valueLabel.ZIndex = 32
-    valueLabel.Parent = card
-    
-    local titleLabel = Instance.new("TextLabel")
-    titleLabel.Size = UDim2.fromScale(1, 0.35)
-    titleLabel.Position = UDim2.fromScale(0, 0.6)
-    titleLabel.BackgroundTransparency = 1
-    titleLabel.Text = info[2]
-    titleLabel.TextScaled = true
-    titleLabel.Font = Enum.Font.Gotham
-    titleLabel.TextColor3 = Color3.fromRGB(161, 161, 170)
-    titleLabel.ZIndex = 32
-    titleLabel.Parent = card
 end
 
--- Footer
-local footerLabel = Instance.new("TextLabel")
-footerLabel.Name = "FooterLabel"
-footerLabel.Size = UDim2.fromScale(1, 0.03)
-footerLabel.Position = UDim2.fromScale(0.5, 0.985)
-footerLabel.AnchorPoint = Vector2.new(0.5, 1)
-footerLabel.BackgroundTransparency = 1
-footerLabel.Text = "© 2024 Lovely-Hub Scripts • For Educational Purposes Only"
-footerLabel.TextScaled = true
-footerLabel.Font = Enum.Font.Gotham
-footerLabel.TextColor3 = Color3.fromRGB(82, 82, 91)
-footerLabel.ZIndex = 30
-footerLabel.Parent = contentHolder
-
--- ANIMASYONLAR
-
--- Dönen halkalar
-spawn(function()
-    while logoContainer.Parent do
-        outerRing.Rotation = outerRing.Rotation + 0.5
-        innerRing.Rotation = innerRing.Rotation - 0.8
-        RunService.RenderStepped:Wait()
-    end
-end)
-
--- Logo nefes alma efekti
-spawn(function()
-    while logoImage.Parent do
-        local tween1 = TweenService:Create(logoImage, TweenInfo.new(1.5, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {Size = UDim2.fromScale(0.8, 0.8)})
-        tween1:Play()
-        tween1.Completed:Wait()
-        local tween2 = TweenService:Create(logoImage, TweenInfo.new(1.5, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {Size = UDim2.fromScale(0.75, 0.75)})
-        tween2:Play()
-        tween2.Completed:Wait()
-    end
-end)
-
--- Noktalar animasyonu (status yanındaki ...)
-local dots = ""
-spawn(function()
-    while statusLabel.Parent do
-        for i = 1, 4 do
-            dots = string.rep(".", i)
-            statusLabel.Text = statusLabel.Text:gsub("%.+$", "") .. dots
-            wait(0.4)
-        end
-    end
-end)
-
--- Ana yükleme animasyonu
-local totalDuration = 6 -- 6 saniye
-local startTime = tick()
-local loadingMessages = {
-    "Initializing components",
-    "Loading assets", 
-    "Preparing scripts",
-    "Connecting to server",
-    "Injecting code",
-    "Finalizing setup",
-    "Complete"
-}
-
-local connection
-connection = RunService.Heartbeat:Connect(function()
-    local elapsed = tick() - startTime
-    local progress = math.clamp(elapsed / totalDuration, 0, 1)
-    
-    -- Progress bar güncelle
-    progressFill.Size = UDim2.fromScale(progress, 1)
-    percentLabel.Text = math.floor(progress * 100) .. "%"
-    
-    -- Status mesajı güncelle
-    local messageIndex = math.min(math.floor(progress * #loadingMessages) + 1, #loadingMessages)
-    local baseMessage = loadingMessages[messageIndex]
-    statusLabel.Text = baseMessage .. dots
-    
-    -- Tamamlandığında kapat
-    if progress >= 1 then
-        connection:Disconnect()
-        
-        -- Son dokunuş: tam ekran fade out
-        local fadeInfo = TweenInfo.new(1.2, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
-        local fadeTween = TweenService:Create(mainFrame, fadeInfo, {BackgroundTransparency = 1})
-        
-        -- Tüm çocukları da fade yap
-        for _, child in pairs(mainFrame:GetDescendants()) do
-            if child:IsA("GuiObject") then
-                TweenService:Create(child, fadeInfo, {BackgroundTransparency = 1, TextTransparency = 1, ImageTransparency = 1}):Play()
-            end
-        end
-        
-        fadeTween:Play()
-        fadeTween.Completed:Wait()
-        
-        screenGui:Destroy()
-        
-        -- Oyun içi UI'ı göster (eğer varsa)
-        playerGui:SetTopbarTransparency(0)
-    end
-end)
-
--- ESC ile atlama (test için)
-local UserInputService = game:GetService("UserInputService")
-UserInputService.InputBegan:Connect(function(input, gameProcessed)
-    if input.KeyCode == Enum.KeyCode.Escape and not gameProcessed then
-        if connection then
-            connection:Disconnect()
-        end
-        screenGui:Destroy()
-    end
-end)
-
-print("Lovely-Hub yükleme ekranı başlatıldı! (ESC ile atlayabilirsiniz)")
+startLoading()
