@@ -772,7 +772,7 @@ Lovely.DisplayOrder = 100
 LoadingFrame.Version.Text = Release
 
 -- Thanks to Latte Softworks for the Lucide integration for Roblox
-local Icons = useStudio and require(script.Parent.icons) or loadWithTimeout('https://raw.githubusercontent.com/LovelyHub-Cranel/lua./refs/heads/main/ion')
+local Icons = useStudio and require(script.Parent.icons) or loadWithTimeout('https://raw.githubusercontent.com/LovelyHub-Cranel/lua./refs/heads/main/gu%C4%B12')
 -- Variables
 
 local CFileName = nil
