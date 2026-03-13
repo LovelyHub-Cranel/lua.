@@ -115,7 +115,7 @@ local subtitle = Instance.new("TextLabel")
 subtitle.Size = UDim2.new(0,400,0,30)
 subtitle.Position = UDim2.new(0.5,-200,0.5,50)
 subtitle.BackgroundTransparency = 1
-subtitle.Text = "Script Executor"
+subtitle.Text = "Script Loading"
 subtitle.TextColor3 = Color3.fromRGB(148,163,184)
 subtitle.TextSize = 20
 subtitle.Font = Enum.Font.GothamSemibold
@@ -203,7 +203,7 @@ task.spawn(function() rotateRing(ring2,5,-1) end)
 -- Loading
 local function startLoading()
 
-	local total = 6
+	local total = 3
 	local steps = #loadingStates
 	local stepTime = total/steps
 
