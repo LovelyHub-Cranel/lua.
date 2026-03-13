@@ -159,7 +159,7 @@ percentText.Position = UDim2.new(0.5,-200,0.6,65)
 percentText.BackgroundTransparency = 1
 percentText.Text = "0%"
 percentText.TextColor3 = Color3.fromRGB(167,139,250)
-percentText.TextSize = 14
+percentText.TextSize = 24
 percentText.Font = Enum.Font.GothamSemibold
 percentText.Parent = mainFrame
 
