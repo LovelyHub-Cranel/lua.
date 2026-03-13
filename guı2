@@ -49,7 +49,7 @@ logo.Name = "Logo"
 logo.Size = UDim2.new(0,150,0,150)
 logo.Position = UDim2.new(0.5,-75,0.3,-75)
 logo.BackgroundTransparency = 1
-logo.Image = "rbxassetid://13535900769"
+logo.Image = "rbxassetid://7072718362"
 logo.ScaleType = Enum.ScaleType.Fit
 logo.Parent = mainFrame
 
