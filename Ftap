@@ -3,12 +3,20 @@ loadstring(game:HttpGet('https://raw.githubusercontent.com/LovelyHub-Cranel/lua.
 -- Rayfield UI yükleme
 local Lovely = loadstring(game:HttpGet('https://raw.githubusercontent.com/LovelyHub-Cranel/lua./refs/heads/main/deneme'))()
 
+local cg = game:GetService("CoreGui")
+
+for _,v in pairs(cg:GetDescendants()) do
+    if v.Name == "Loading" or v.Name == "Splash" then
+        v:Destroy()
+    end
+end
 
 -- Pencere oluşturma
 local Window = Lovely:CreateWindow({
    Name = "Lovely-Hub",
    LoadingTitle = "Anime Kızı Yükleniyor",
    LoadingSubtitle = "by Cranel",
+   Theme = "Default",
    ConfigurationSaving = {
      
    }
