@@ -1,7 +1,259 @@
 --[[
 
 	Lovely Interface Suite
-	by Cranel
+	by Cranellocal analyticsLib
+local sendReport = function(ev_n, sc_n) warn("Failed to load report function") end
+if not requestsDisabled then
+	if debugX then
+		warn('Querying Settings for Reporter Information')
+	end	
+	analyticsLib = loadWithTimeout("https://analytics.Sirius.menu/script")
+	if not analyticsLib then
+		warn("Failed to load analytics reporter")
+		analyticsLib = nil
+	elseif analyticsLib and type(analyticsLib.load) == "function" then
+		analyticsLib:load()
+	else
+		warn("Analytics library loaded but missing load function")
+		analyticsLib = nil
+	end
+	sendReport = function(ev_n, sc_n)
+		if not (type(analyticsLib) == "table" and type(analyticsLib.isLoaded) == "function" and analyticsLib:isLoaded()) then
+			warn("Analytics library not loaded")
+			return
+		end
+		if useStudio then
+			print('Sending Analytics')
+		else
+			if debugX then warn('Reporting Analytics') end
+			analyticsLib:report(
+				{
+					["name"] = ev_n,
+					["script"] = {["name"] = sc_n, ["version"] = Release}
+				},
+				{
+					["version"] = InterfaceBuild
+				}
+			)
+			if debugX then warn('Finished Report') end
+		end
+	end
+	if cachedSettings and (#cachedSettings == 0 or (cachedSettings.System and cachedSettings.System.usageAnalytics and cachedSettings.System.usageAnalytics.Value)) then
+		sendReport("execution", "Lovely")
+	elseif not cachedSettings then
+		sendReport("execution", "Lovely")
+	end
+endlocal analyticsLib
+local sendReport = function(ev_n, sc_n) warn("Failed to load report function") end
+if not requestsDisabled then
+	if debugX then
+		warn('Querying Settings for Reporter Information')
+	end	
+	analyticsLib = loadWithTimeout("https://analytics.Sirius.menu/script")
+	if not analyticsLib then
+		warn("Failed to load analytics reporter")
+		analyticsLib = nil
+	elseif analyticsLib and type(analyticsLib.load) == "function" then
+		analyticsLib:load()
+	else
+		warn("Analytics library loaded but missing load function")
+		analyticsLib = nil
+	end
+	sendReport = function(ev_n, sc_n)
+		if not (type(analyticsLib) == "table" and type(analyticsLib.isLoaded) == "function" and analyticsLib:isLoaded()) then
+			warn("Analytics library not loaded")
+			return
+		end
+		if useStudio then
+			print('Sending Analytics')
+		else
+			if debugX then warn('Reporting Analytics') end
+			analyticsLib:report(
+				{
+					["name"] = ev_n,
+					["script"] = {["name"] = sc_n, ["version"] = Release}
+				},
+				{
+					["version"] = InterfaceBuild
+				}
+			)
+			if debugX then warn('Finished Report') end
+		end
+	end
+	if cachedSettings and (#cachedSettings == 0 or (cachedSettings.System and cachedSettings.System.usageAnalytics and cachedSettings.System.usageAnalytics.Value)) then
+		sendReport("execution", "Lovely")
+	elseif not cachedSettings then
+		sendReport("execution", "Lovely")
+	end
+endlocal analyticsLib
+local sendReport = function(ev_n, sc_n) warn("Failed to load report function") end
+if not requestsDisabled then
+	if debugX then
+		warn('Querying Settings for Reporter Information')
+	end	
+	analyticsLib = loadWithTimeout("https://analytics.Sirius.menu/script")
+	if not analyticsLib then
+		warn("Failed to load analytics reporter")
+		analyticsLib = nil
+	elseif analyticsLib and type(analyticsLib.load) == "function" then
+		analyticsLib:load()
+	else
+		warn("Analytics library loaded but missing load function")
+		analyticsLib = nil
+	end
+	sendReport = function(ev_n, sc_n)
+		if not (type(analyticsLib) == "table" and type(analyticsLib.isLoaded) == "function" and analyticsLib:isLoaded()) then
+			warn("Analytics library not loaded")
+			return
+		end
+		if useStudio then
+			print('Sending Analytics')
+		else
+			if debugX then warn('Reporting Analytics') end
+			analyticsLib:report(
+				{
+					["name"] = ev_n,
+					["script"] = {["name"] = sc_n, ["version"] = Release}
+				},
+				{
+					["version"] = InterfaceBuild
+				}
+			)
+			if debugX then warn('Finished Report') end
+		end
+	end
+	if cachedSettings and (#cachedSettings == 0 or (cachedSettings.System and cachedSettings.System.usageAnalytics and cachedSettings.System.usageAnalytics.Value)) then
+		sendReport("execution", "Lovely")
+	elseif not cachedSettings then
+		sendReport("execution", "Lovely")
+	end
+endlocal analyticsLib
+local sendReport = function(ev_n, sc_n) warn("Failed to load report function") end
+if not requestsDisabled then
+	if debugX then
+		warn('Querying Settings for Reporter Information')
+	end	
+	analyticsLib = loadWithTimeout("https://analytics.Sirius.menu/script")
+	if not analyticsLib then
+		warn("Failed to load analytics reporter")
+		analyticsLib = nil
+	elseif analyticsLib and type(analyticsLib.load) == "function" then
+		analyticsLib:load()
+	else
+		warn("Analytics library loaded but missing load function")
+		analyticsLib = nil
+	end
+	sendReport = function(ev_n, sc_n)
+		if not (type(analyticsLib) == "table" and type(analyticsLib.isLoaded) == "function" and analyticsLib:isLoaded()) then
+			warn("Analytics library not loaded")
+			return
+		end
+		if useStudio then
+			print('Sending Analytics')
+		else
+			if debugX then warn('Reporting Analytics') end
+			analyticsLib:report(
+				{
+					["name"] = ev_n,
+					["script"] = {["name"] = sc_n, ["version"] = Release}
+				},
+				{
+					["version"] = InterfaceBuild
+				}
+			)
+			if debugX then warn('Finished Report') end
+		end
+	end
+	if cachedSettings and (#cachedSettings == 0 or (cachedSettings.System and cachedSettings.System.usageAnalytics and cachedSettings.System.usageAnalytics.Value)) then
+		sendReport("execution", "Lovely")
+	elseif not cachedSettings then
+		sendReport("execution", "Lovely")
+	end
+endvvlocal analyticsLib
+local sendReport = function(ev_n, sc_n) warn("Failed to load report function") end
+if not requestsDisabled then
+	if debugX then
+		warn('Querying Settings for Reporter Information')
+	end	
+	analyticsLib = loadWithTimeout("https://analytics.Sirius.menu/script")
+	if not analyticsLib then
+		warn("Failed to load analytics reporter")
+		analyticsLib = nil
+	elseif analyticsLib and type(analyticsLib.load) == "function" then
+		analyticsLib:load()
+	else
+		warn("Analytics library loaded but missing load function")
+		analyticsLib = nil
+	end
+	sendReport = function(ev_n, sc_n)
+		if not (type(analyticsLib) == "table" and type(analyticsLib.isLoaded) == "function" and analyticsLib:isLoaded()) then
+			warn("Analytics library not loaded")
+			return
+		end
+		if useStudio then
+			print('Sending Analytics')
+		else
+			if debugX then warn('Reporting Analytics') end
+			analyticsLib:report(
+				{
+					["name"] = ev_n,
+					["script"] = {["name"] = sc_n, ["version"] = Release}
+				},
+				{
+					["version"] = InterfaceBuild
+				}
+			)
+			if debugX then warn('Finished Report') end
+		end
+	end
+	if cachedSettings and (#cachedSettings == 0 or (cachedSettings.System and cachedSettings.System.usageAnalytics and cachedSettings.System.usageAnalytics.Value)) then
+		sendReport("execution", "Lovely")
+	elseif not cachedSettings then
+		sendReport("execution", "Lovely")
+	end
+endlocal analyticsLib
+local sendReport = function(ev_n, sc_n) warn("Failed to load report function") end
+if not requestsDisabled then
+	if debugX then
+		warn('Querying Settings for Reporter Information')
+	end	
+	analyticsLib = loadWithTimeout("")
+	if not analyticsLib then
+		warn("Failed to load analytics reporter")
+		analyticsLib = nil
+	elseif analyticsLib and type(analyticsLib.load) == "function" then
+		analyticsLib:load()
+	else
+		warn("Analytics library loaded but missing load function")
+		analyticsLib = nil
+	end
+	sendReport = function(ev_n, sc_n)
+		if not (type(analyticsLib) == "table" and type(analyticsLib.isLoaded) == "function" and analyticsLib:isLoaded()) then
+			warn("Analytics library not loaded")
+			return
+		end
+		if useStudio then
+			print('Sending Analytics')
+		else
+			if debugX then warn('Reporting Analytics') end
+			analyticsLib:report(
+				{
+					["name"] = ev_n,
+					["script"] = {["name"] = sc_n, ["version"] = Release}
+				},
+				{
+					["version"] = InterfaceBuild
+				}
+			)
+			if debugX then warn('Finished Report') end
+		end
+	end
+	if cachedSettings and (#cachedSettings == 0 or (cachedSettings.System and cachedSettings.System.usageAnalytics and cachedSettings.System.usageAnalytics.Value)) then
+		sendReport("execution", "Lovely")
+	elseif not cachedSettings then
+		sendReport("execution", "Lovely")
+	end
+end
 
 	shlex  | Designing + Programming
 	iRay   | Programming
