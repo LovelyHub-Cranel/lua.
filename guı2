@@ -203,7 +203,7 @@ task.spawn(function() rotateRing(ring2,5,-1) end)
 -- Loading
 local function startLoading()
 
-	local total = 3
+	local total = 2
 	local steps = #loadingStates
 	local stepTime = total/steps
 
@@ -221,7 +221,7 @@ local function startLoading()
 
 	end
 
-	task.wait(0.5)
+	task.wait(0.1)
 
 	-- Fade
 	local fade = TweenInfo.new(0.8)
