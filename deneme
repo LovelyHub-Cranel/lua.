@@ -585,8 +585,8 @@ local LovelyLibrary = {
 			DropdownSelected = Color3.fromRGB(95, 10, 10),
 			DropdownUnselected = Color3.fromRGB(85, 5, 5),
 
-			InputBackground = Color3.fromRGB(30, 30, 30),
-			InputStroke = Color3.fromRGB(65, 65, 65),
+			InputBackground = Color3.fromRGB(95, 10, 10),
+			InputStroke = Color3.fromRGB(75, 50, 135),
 			PlaceholderColor = Color3.fromRGB(178, 178, 178)
 		},
 
