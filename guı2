@@ -159,7 +159,7 @@ percentText.Position = UDim2.new(0.5,-200,0.6,65)
 percentText.BackgroundTransparency = 1
 percentText.Text = "0%"
 percentText.TextColor3 = Color3.fromRGB(167,139,250)
-percentText.TextSize = 24
+percentText.TextSize = 20
 percentText.Font = Enum.Font.GothamSemibold
 percentText.Parent = mainFrame
 
@@ -170,7 +170,7 @@ statusText.Position = UDim2.new(0.5,-200,0.65,20)
 statusText.BackgroundTransparency = 1
 statusText.Text = "Initializing..."
 statusText.TextColor3 = Color3.fromRGB(196,181,253)
-statusText.TextSize = 16
+statusText.TextSize = 20
 statusText.Font = Enum.Font.GothamMedium
 statusText.Parent = mainFrame
 
@@ -203,7 +203,7 @@ task.spawn(function() rotateRing(ring2,5,-1) end)
 -- Loading
 local function startLoading()
 
-	local total = 2
+	local total = 3
 	local steps = #loadingStates
 	local stepTime = total/steps
 
