@@ -27,7 +27,7 @@ local Players = game:GetService("Players")
 local TextChatService = game:GetService("TextChatService")
 
 local player = Players.LocalPlayer
-local message = "Lovely❤-Hub😜"
+local message = ""
 
 -- Oyuncu tamamen yüklenene kadar bekle
 repeat task.wait() until player
@@ -51,9 +51,9 @@ local Tab = Window:CreateTab("Zaman", 4483362458)
 
 local MainTab = Window:CreateTab("Main", 4483362458)
 
-local TargetTab = Window:CreateTab("Target", 4483362458)
-
 local DefanceTab = Window:CreateTab("Defance", 4483362458)
+
+local Defance2Tab = Window:CreateTab("Defance2", 4483362458)
 
 local FunTab = Window:CreateTab("Fun", 4483362458)
 
@@ -594,6 +594,69 @@ DefanceTab:CreateToggle({
 
 	end
 })
+local AntiBlobmanEnabled = false
+
+local function EnableAntiBlobman()
+    if AntiBlobmanEnabled then return end
+    AntiBlobmanEnabled = true
+    
+    -- zaten spawn olmuş olanları da temizle
+    for _, obj in workspace:GetDescendants() do
+        if obj.Name == "CreatureBlobman" then
+            if obj:FindFirstChild("LeftDetector") then
+                obj.LeftDetector:Destroy()
+            end
+            if obj:FindFirstChild("RightDetector") then
+                obj.RightDetector:Destroy()
+            end
+        end
+    end
+    
+    -- yeni spawn olanları yakala
+    local connection
+    connection = workspace.DescendantAdded:Connect(function(child)
+        if not AntiBlobmanEnabled then
+            connection:Disconnect()
+            return
+        end
+        
+        if child.Name == "CreatureBlobman" then
+            task.delay(0.1, function()  -- biraz beklemek genelde daha güvenli
+                if child.Parent and child:FindFirstChild("LeftDetector") then
+                    child.LeftDetector:Destroy()
+                end
+                if child.Parent and child:FindFirstChild("RightDetector") then
+                    child.RightDetector:Destroy()
+                end
+            end)
+        end
+    end)
+    
+    -- toggle kapatıldığında bağlantıyı temizlemek için
+    getgenv().AntiBlobmanConnection = connection
+end
+
+local function DisableAntiBlobman()
+    AntiBlobmanEnabled = false
+    if getgenv().AntiBlobmanConnection then
+        getgenv().AntiBlobmanConnection:Disconnect()
+        getgenv().AntiBlobmanConnection = nil
+    end
+end
+
+-- Rayfield kullanımı
+DefanceTab:CreateToggle({
+    Name = "Anti Blobman",
+    Info = "Blobman'ın detectorlarını kaldırır",
+    Default = false,
+    Callback = function(Value)
+        if Value then
+            EnableAntiBlobman()
+        else
+            DisableAntiBlobman()
+        end
+    end
+})
 local hookBurnConn
 local function hookBurn(char)
 	local hum = char:WaitForChild("Humanoid")
@@ -917,7 +980,7 @@ local function spawnKatana()
 		spawnRemote:InvokeServer(
 			"NinjaKatana",
 			hrp.CFrame * CFrame.new(0,0,20),
-			Vector3.new(0,0,0)
+			Vector3.new(0,-1,0)
 		)
 	end)
 end
@@ -1012,7 +1075,7 @@ task.spawn(function()
 
 end)
 local tpActive = false
-DefanceTab:CreateToggle({
+Defance2Tab:CreateToggle({
 	Name = "Anti 2.0",
 	CurrentValue = false,
 	Flag = "KatanaAnti",
@@ -1144,6 +1207,17 @@ DefanceTab:CreateToggle({
 				end
 				while _G.KatanaAnti do
 					task.wait(0.001)
+
+	                -- SprayCanWD koruma
+                    pcall(function()
+	                    local inv = workspace:FindFirstChild(plr.Name .. "SpawnedInToys")
+	                    if inv then
+		                    local kat = inv:FindFirstChild("Anti") or inv:FindFirstChild("NinjaKatana")
+		                    if kat and kat:FindFirstChild("StickyPart") then
+			                    StickKatana(kat)
+		                    end
+	                    end
+                    end)
 					if not plr.Character or not plr.Character:FindFirstChild("Humanoid") or plr.Character.Humanoid.Health <= 0 then
 						continue
 					end
@@ -1206,4 +1280,55 @@ DefanceTab:CreateToggle({
 			ClearKatana()
 		end
 	end
+})
+
+FunTab:CreateToggle({
+    Name = "Ragdoll Glitch Left",
+    CurrentValue = false,
+    Flag = "RagdollToggle",
+    Callback = function(Value)
+        if Value then
+            local Remote = game.ReplicatedStorage.CharacterEvents.RagdollRemote
+            local Character = game.Players.LocalPlayer.Character or game.Players.LocalPlayer.CharacterAdded:Wait()
+            local OldVoid = workspace.FallenPartsDestroyHeight
+            local Position = Character.HumanoidRootPart.CFrame
+            workspace.FallenPartsDestroyHeight = -100
+            local Leg = "Left Leg" -- veya "Right Leg"
+
+            Remote:FireServer(Character.HumanoidRootPart, 2)
+            task.wait(0.5)
+            Character[Leg].CFrame = CFrame.new(0, -10000, 0)
+            task.wait(0.3)
+            Character.Torso.CFrame = CFrame.new(0, -9970, 0)
+            task.wait(0.5)
+            Character.Torso.CFrame = Position
+            workspace.FallenPartsDestroyHeight = OldVoid
+            Remote:FireServer(Character.HumanoidRootPart, 1)
+        end
+    end
+})
+FunTab:CreateToggle({
+    Name = "Ragdoll Glitch Right",
+    CurrentValue = false,
+    Flag = "RagdollToggle",
+    Callback = function(Value)
+        if Value then
+            local Remote = game.ReplicatedStorage.CharacterEvents.RagdollRemote
+            local Character = game.Players.LocalPlayer.Character or game.Players.LocalPlayer.CharacterAdded:Wait()
+            local OldVoid = workspace.FallenPartsDestroyHeight
+            local Position = Character.HumanoidRootPart.CFrame
+            workspace.FallenPartsDestroyHeight = -100
+            local Leg = "Right Leg" -- veya "Right Leg"
+
+            Remote:FireServer(Character.HumanoidRootPart, 2)
+            task.wait(0.5)
+            Character[Leg].CFrame = CFrame.new(0, -10000, 0)
+            task.wait(0.3)
+            Character.Torso.CFrame = CFrame.new(0, -9970, 0)
+            task.wait(0.5)
+            Character.Torso.CFrame = Position
+            workspace.FallenPartsDestroyHeight = OldVoid
+            Remote:FireServer(Character.HumanoidRootPart, 1)
+        end
+    end
 })
