@@ -27,7 +27,7 @@ local Players = game:GetService("Players")
 local TextChatService = game:GetService("TextChatService")
 
 local player = Players.LocalPlayer
-local message = "Lovely❤️-Hub Loading.lua."
+local message = "Lovely❤-Hub"
 
 -- Oyuncu tamamen yüklenene kadar bekle
 repeat task.wait() until player
@@ -168,6 +168,7 @@ DefanceTab:CreateToggle({
 
     end
 })
+local autoStruggleConn = nil
 DefanceTab:CreateToggle({
     Name = "Anti-Grab",
     CurrentValue = false,
@@ -227,7 +228,6 @@ DefanceTab:CreateToggle({
 		end
 	end
 })
-
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
 
@@ -948,6 +948,470 @@ DefanceTab:CreateToggle({
 	end
 })
 
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+
+local player = Players.LocalPlayer
+local dialogueParent = player:WaitForChild("PlayerGui")
+
+local floppadialogo = Instance.new("ScreenGui")
+local Floppa = Instance.new("ImageLabel")
+local Bubble_chat = Instance.new("ImageLabel")
+local BubbleTextchat = Instance.new("TextLabel")
+
+local typingsoundeffect = Instance.new("Sound", workspace)
+local typingsoundeffect2 = Instance.new("Sound", workspace)
+
+typingsoundeffect.SoundId = "rbxassetid://9120299506"
+typingsoundeffect.Volume = 0.345
+
+typingsoundeffect2.SoundId = "rbxassetid://9118870964"
+typingsoundeffect2.Volume = 1
+typingsoundeffect2.PlaybackSpeed = 1.5
+
+floppadialogo.Parent = dialogueParent
+floppadialogo.Name = "floppadialogo"
+floppadialogo.DisplayOrder = 10
+floppadialogo.Enabled = false
+floppadialogo.ResetOnSpawn = false
+
+-- Character
+
+Floppa.Parent = floppadialogo
+Floppa.BackgroundTransparency = 1
+Floppa.Image = "rbxthumb://type=Asset&id=98077164010786&w=420&h=420"
+Floppa.Size = UDim2.new(0.19,0,0.30,0)
+Floppa.Position = UDim2.new(0.02,0,2,0)
+
+-- Chat bubble
+
+Bubble_chat.Parent = Floppa
+Bubble_chat.BackgroundTransparency = 1
+Bubble_chat.Image = "rbxassetid://1395860348"
+Bubble_chat.Size = UDim2.new(1.03,0,0.79,0)
+Bubble_chat.Position = UDim2.new(0.68,0,-0.29,0)
+
+-- Text
+
+BubbleTextchat.Parent = Bubble_chat
+BubbleTextchat.BackgroundTransparency = 1
+BubbleTextchat.TextScaled = true
+BubbleTextchat.TextWrapped = true
+BubbleTextchat.TextColor3 = Color3.new(0,0,0)
+BubbleTextchat.Font = Enum.Font.SourceSans
+BubbleTextchat.Size = UDim2.new(0.63,0,0.26,0)
+BubbleTextchat.Position = UDim2.new(0.18,0,0.36,0)
+BubbleTextchat.Text = ""
+
+-- Tween
+
+local tweenInfo = TweenInfo.new(1,Enum.EasingStyle.Linear,Enum.EasingDirection.In)
+
+local floppatween = TweenService:Create(
+    Floppa,
+    tweenInfo,
+    {Position = UDim2.new(0.02,0,0.66,0)}
+)
+
+local floppamessageoncooldown = false
+
+function Antivoidmesssage()
+
+    if not floppamessageoncooldown then
+
+        Floppa.Position = UDim2.new(0.02,0,2,0)
+
+        floppadialogo.Enabled = true
+        Bubble_chat.Visible = false
+        BubbleTextchat.Visible = false
+
+        floppamessageoncooldown = true
+
+        floppatween:Play()
+
+        floppatween.Completed:Connect(function()
+
+            Bubble_chat.Visible = true
+            BubbleTextchat.Visible = true
+
+            local dialogueText = "Seni Femboylardan Kurtardım"
+
+            for i = 1,#dialogueText do
+                BubbleTextchat.Text = string.sub(dialogueText,1,i)
+                typingsoundeffect:Play()
+                task.wait(0.05)
+            end
+
+            task.wait(3)
+
+            typingsoundeffect2:Play()
+
+            floppadialogo.Enabled = false
+            floppamessageoncooldown = false
+
+        end)
+
+    end
+end
+
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local Player = Players.LocalPlayer
+
+-- Ayarlar (FTAP 2026 için önerilen değerler)
+local MAX_SAFE_HEIGHT = 10       -- Normalde 150-220 arası ideal, test et
+local GROUND_Y = 5                -- Zemin seviyesi (haritaya göre 0-10)
+local CHECK_INTERVAL = 0.07       -- Biraz yavaşlattım, anti-cheat'e daha az takılır
+local MESSAGE_COOLDOWN = 2.5      -- Bildirim spam önleme (saniye)
+
+local lastMessageTime = 0
+
+local StruggleEvent = ReplicatedStorage:FindFirstChild("CharacterEvents", true) 
+                     and (ReplicatedStorage.CharacterEvents:FindFirstChild("Struggle") or ReplicatedStorage.CharacterEvents:FindFirstChild("ForceRelease") or ReplicatedStorage:FindFirstChild("Struggle", true))
+
+local antiHighConn
+local struggleSpamConn
+local isEnabled = false
+
+
+local function getRootAndHum()
+    local char = Player.Character
+    if not char then return nil, nil end
+    return char:FindFirstChild("HumanoidRootPart"), char:FindFirstChildOfClass("Humanoid")
+end
+
+local function forceToGround(root, hum, reason)
+    if not root then return end
+    
+    local safeCFrame = CFrame.new(root.Position.X, GROUND_Y, root.Position.Z) * root.CFrame.Rotation
+    root.CFrame = safeCFrame
+    
+    root.AssemblyLinearVelocity = Vector3.new(0, -120, 0)   -- Daha sert yere yapışma
+    root.AssemblyAngularVelocity = Vector3.new()
+    
+    if hum then
+        hum.PlatformStand = false
+        hum:SetStateEnabled(Enum.HumanoidStateType.FallingDown, false)
+        hum:SetStateEnabled(Enum.HumanoidStateType.Ragdoll, false)
+        hum:ChangeState(Enum.HumanoidStateType.GettingUp)
+        task.delay(0.1, function()
+            hum:ChangeState(Enum.HumanoidStateType.Running)
+        end)
+    end
+    
+    Antivoidmesssage(reason or "Yüksekten / Grab'dan kurtarıldın!")
+end
+
+local function startStruggleSpam()
+    if struggleSpamConn then struggleSpamConn:Disconnect() end
+    
+    struggleSpamConn = RunService.Heartbeat:Connect(function()
+        local char = Player.Character
+        if not char then return end
+        
+        local isHeld = Player:FindFirstChild("IsHeld") or Player:FindFirstChild("Grabbed") -- fallback isim
+        if isHeld and isHeld.Value == true then
+            if StruggleEvent then
+                pcall(function()
+                    StruggleEvent:FireServer()
+                    task.wait(0.01)  -- Daha hızlı spam, ama kick riski artar
+                    StruggleEvent:FireServer()
+                end)
+            end
+            
+            local root = char:FindFirstChild("HumanoidRootPart")
+            if root then
+                root.AssemblyLinearVelocity = Vector3.new(0, -150, 0)  -- Çok sert aşağı çek
+                root.AssemblyAngularVelocity = Vector3.new()
+                
+                -- Ownership geri alma denemesi (loop grab'e karşı ekstra)
+                pcall(function()
+                    ReplicatedStorage.GrabEvents.SetNetworkOwner:FireServer(root, nil)  -- Server'a bırakmaya çalış
+                end)
+            end
+            
+            Antivoidmesssage("Grab / Kick spam algılandı - Struggle aktif!")
+        end
+    end)
+end
+
+local function highAndGrabCheck()
+    if not isEnabled then return end
+    
+    local root, hum = getRootAndHum()
+    if not root or not hum then return end
+    
+    -- Yüksekte mi?
+    if root.Position.Y > MAX_SAFE_HEIGHT then
+        forceToGround(root, hum, "Yüksek fling engellendi!")
+    end
+    
+    -- Grab / kick spam kontrolü
+    local isHeld = Player:FindFirstChild("IsHeld") or Player:FindFirstChild("Grabbed")
+    if isHeld and isHeld.Value then
+        root.AssemblyLinearVelocity = Vector3.new(
+            root.AssemblyLinearVelocity.X * 0.05,
+            -150,  -- Çok agresif yere çek
+            root.AssemblyLinearVelocity.Z * 0.05
+        )
+        Antivoidmesssage("Grab yakalandı - Yere yapıştırılıyor!")
+    end
+    
+    -- Black hole / kick uyarısı (eğer varsa)
+    local blackHole = workspace:FindFirstChild("BlackHole") or workspace:FindFirstChildWhichIsA("Part", true) -- isim değişebilir
+    if blackHole and blackHole.Name:lower():find("black") and (root.Position - blackHole.Position).Magnitude < 60 then
+        forceToGround(root, hum, "Black hole algılandı - Hemen yere!")
+    end
+end
+
+-- Toggle
+Defance2Tab:CreateToggle({
+    Name = "Anti-Ground",
+    CurrentValue = false,
+    Flag = "antikick_high_toggle",
+
+    Callback = function(enabled)
+        isEnabled = enabled
+        
+        if enabled then
+            if antiHighConn then antiHighConn:Disconnect() end
+            antiHighConn = RunService.Heartbeat:Connect(function(dt)
+                if tick() % CHECK_INTERVAL < dt * 2 then
+                    pcall(highAndGrabCheck)
+                end
+            end)
+            
+            startStruggleSpam()
+            
+            Player.CharacterAdded:Connect(function()
+                if isEnabled then
+                    task.wait(0.6)
+                    local r, h = getRootAndHum()
+                    if r then forceToGround(r, h, "Respawn sonrası yere çekildin!") end
+                    startStruggleSpam()
+                end
+            end)
+            
+        else
+            if antiHighConn then antiHighConn:Disconnect() antiHighConn = nil end
+            if struggleSpamConn then struggleSpamConn:Disconnect() struggleSpamConn = nil end
+        end
+    end
+})
+
+-- İlk yükleme
+if Player.Character then
+    task.spawn(function()
+        task.wait(1.5)
+        highAndGrabCheck()
+    end)
+end
+
+-- İlk yüklemede kontrol
+if Player.Character then
+    task.spawn(function()
+        task.wait(1)
+        highAndGrabCheck()
+    end)
+end
+
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local Player = Players.LocalPlayer
+
+local autoStruggleConn = nil
+local lastStruggleTime = 0
+local lastAnchorTime = 0
+
+-- Güvenli değerler (FTAP anti-cheat'e daha az takılır)
+local STRUGGLE_COOLDOWN = 0.26     -- 0.27'den biraz düşürdük ama hala güvenli
+local ANCHOR_DEBOUNCE   = 0.38     -- Anchor spam'ini önler
+local VELOCITY_DOWN     = -72      -- Yere yapıştırma için dengeli değer
+
+Defance2Tab:CreateToggle({
+    Name = "Anti Loop Kick",
+    CurrentValue = false,
+    Flag = "antigrab_loopkick_safe",
+
+    Callback = function(Value)
+        if autoStruggleConn then
+            autoStruggleConn:Disconnect()
+            autoStruggleConn = nil
+        end
+
+        if not Value then
+            -- Kapatıldığında anchor'ları temizle
+            local char = Player.Character
+            if char then
+                for _, part in pairs(char:GetChildren()) do
+                    if part:IsA("BasePart") then
+                        part.Anchored = false
+                    end
+                end
+            end
+            return
+        end
+
+        -- Struggle Remote'u bul (FTAP standart yolu)
+        local CharacterEvents = ReplicatedStorage:FindFirstChild("CharacterEvents")
+        local Struggle = CharacterEvents and CharacterEvents:FindFirstChild("Struggle")
+
+        autoStruggleConn = RunService.Heartbeat:Connect(function()
+            local char = Player.Character
+            if not char or not char:FindFirstChild("Head") then return end
+
+            local head = char.Head
+            local partOwner = head:FindFirstChild("PartOwner")
+
+            -- FTAP grab algılama (PartOwner + IsHeld)
+            local isGrabbed = false
+            if partOwner and partOwner.Value ~= Player.Name then
+                isGrabbed = true
+            end
+
+            local isHeld = Player:FindFirstChild("IsHeld")
+            if isHeld and isHeld.Value then
+                isGrabbed = true
+            end
+
+            if isGrabbed then
+                -- Struggle (doğru argüman ile)
+                if Struggle and tick() - lastStruggleTime > STRUGGLE_COOLDOWN then
+                    lastStruggleTime = tick()
+                    pcall(function()
+                        Struggle:FireServer(Player)
+                    end)
+                end
+
+                -- GameCorrectionEvents varsa velocity sıfırla
+                pcall(function()
+                    local gce = ReplicatedStorage:FindFirstChild("GameCorrectionEvents")
+                    if gce then
+                        local stopVel = gce:FindFirstChild("StopAllVelocity")
+                        if stopVel then
+                            stopVel:FireServer()
+                        end
+                    end
+                end)
+
+                -- Anchor + yere çekme (debounce ile)
+                if tick() - lastAnchorTime > ANCHOR_DEBOUNCE then
+                    lastAnchorTime = tick()
+
+                    -- Tüm parçaları anchor'la (grab'ı kırar)
+                    for _, part in pairs(char:GetChildren()) do
+                        if part:IsA("BasePart") then
+                            part.Anchored = true
+                        end
+                    end
+
+                    -- Ekstra yere yapıştırma
+                    local root = char:FindFirstChild("HumanoidRootPart")
+                    if root then
+                        root.AssemblyLinearVelocity = Vector3.new(0, VELOCITY_DOWN, 0)
+                        root.AssemblyAngularVelocity = Vector3.zero
+                    end
+
+                    -- Humanoid state reset (ragdoll/kick önleme)
+                    local hum = char:FindFirstChildOfClass("Humanoid")
+                    if hum then
+                        pcall(function()
+                            hum.PlatformStand = false
+                            hum:ChangeState(Enum.HumanoidStateType.GettingUp)
+                        end)
+                    end
+                end
+            else
+                -- Grab bittiğinde anchor'ı kaldır (gecikmeli)
+                if tick() - lastAnchorTime > 0.45 then
+                    for _, part in pairs(char:GetChildren()) do
+                        if part:IsA("BasePart") then
+                            part.Anchored = false
+                        end
+                    end
+                end
+            end
+        end)
+    end
+})
+
+-- Respawn sonrası otomatik temizleme + yeniden kurulum
+Player.CharacterAdded:Connect(function()
+    task.wait(0.7)
+    local char = Player.Character
+    if char then
+        for _, part in pairs(char:GetChildren()) do
+            if part:IsA("BasePart") then
+                part.Anchored = false
+            end
+        end
+    end
+end)
+
+
+local Players = game:GetService("Players")
+local Player = Players.LocalPlayer
+local Workspace = game:GetService("Workspace")
+
+local AntiBananaEnabled = nil
+
+local function AntiBanana()
+    if AntiBananaEnabled then
+        task.spawn(function()
+            while AntiBananaEnabled do
+                local Character = Player.Character
+                if Character then
+                    local HumanoidRootPart = Character:FindFirstChild("HumanoidRootPart")
+                    local Torso = Character:FindFirstChild("Torso")
+                    local LeftLeg = Character:FindFirstChild("Left Leg")
+                    local RightLeg = Character:FindFirstChild("Right Leg")
+
+                    if HumanoidRootPart and Torso and LeftLeg and RightLeg then
+                        local Remote = game.ReplicatedStorage.CharacterEvents.RagdollRemote
+
+                        local OldVoid = workspace.FallenPartsDestroyHeight
+                        local Position = HumanoidRootPart.CFrame
+
+                        Workspace.FallenPartsDestroyHeight = -100
+
+                        Remote:FireServer(HumanoidRootPart, 2)
+                        task.wait(0.5)
+
+                        LeftLeg.CFrame = CFrame.new(0,-10000,0)
+                        RightLeg.CFrame = CFrame.new(0,-10000,0)
+
+                        task.wait(0.3)
+
+                        Torso.CFrame = CFrame.new(0,-9970,0)
+
+                        task.wait(0.5)
+
+                        Torso.CFrame = Position
+                        Workspace.FallenPartsDestroyHeight = OldVoid
+
+                        Remote:FireServer(HumanoidRootPart, 1)
+                    end
+                end
+                task.wait()
+            end
+        end)
+    end
+end
+
+
+local VoidRagdollToggle = Defance2Tab:CreateToggle({ 
+    Name = "Anti-Banana", 
+    CurrentValue = false,
+    Flag = "AntiBananaFlag", 
+    Callback = function(Value)
+        AntiBananaEnabled = Value
+        AntiBanana()
+    end
+})
 
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -1076,7 +1540,7 @@ task.spawn(function()
 end)
 local tpActive = false
 Defance2Tab:CreateToggle({
-	Name = "Anti 2.0",
+	Name = "Anti Katana",
 	CurrentValue = false,
 	Flag = "KatanaAnti",
 	Callback = function(Value)
