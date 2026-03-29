@@ -309,9 +309,9 @@ local Templates = {
         MinContainerWidth = 256,
 
         --// Snapping \\--
-        MinSidebarWidth = 128,
-        SidebarCompactWidth = 48,
-        SidebarCollapseThreshold = 0.5,
+        SidebarCompacted = true, 
+        SidebarCompactWidth = 48, 
+        CompactWidthActivation = 100,
 
         --// Dragging \\--
         CompactWidthActivation = 128,
