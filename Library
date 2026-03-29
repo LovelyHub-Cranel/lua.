@@ -28,7 +28,7 @@ local Toggles = {}
 local Options = {}
 local Tooltips = {}
 
-local BaseURL = ""
+local BaseURL = "Lovely.Main"
 local CustomImageManager = {}
 local CustomImageManagerAssets = {
     TransparencyTexture = {
