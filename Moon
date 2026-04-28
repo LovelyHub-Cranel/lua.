@@ -2689,7 +2689,7 @@ end
 do
 local box = Tabs.Blobman:AddLeftGroupbox("Selected", "user")
 
-local bOx = Tabs.Blobman:AddRightGroupbox("Method", "target")
+local bOx = Tabs.Blobman:AddRightGroupbox("Blobman", "target")
 
 local boX = Tabs.Blobman:AddLeftGroupbox("Settings", "wrench")
 
@@ -2712,7 +2712,7 @@ BlobmanTarget = box:AddDropdown("Target", {
 
 bOx:AddDropdown("Method", {
     Text = "Method",
-    Values = {"Lock Target1", "Lock Target2", "Super Lock", "Kill"},
+    Values = {"Lock Target1", "Lock Target2", "Super Lock", "Kill","Fast Kill"},
     Default = 0,
     Multi = false,
     Callback = function(v)
@@ -2795,6 +2795,24 @@ bOx:AddButton("Apply Method", function()
                 end
             end
         elseif Method == "Kill" then
+            if Blob and Blob.Name == "CreatureBlobman" then
+                local CD,CG = Blob.BlobmanSeatAndOwnerScript.CreatureRelease, Blob.BlobmanSeatAndOwnerScript.CreatureGrab
+                local pos = HRP.CFrame
+                if tt.Character and tt.Character:FindFirstChild("HumanoidRootPart") and tt.Character.Humanoid.Health ~= 0 then
+                    Blob.HumanoidRootPart.CFrame = tt.Character.HumanoidRootPart.CFrame
+                    task.wait(0.1)
+                    repeat task.wait()
+                        CG:FireServer(nil, tt.Character.HumanoidRootPart, Blob.RightDetector.RightWeld)
+                        CD:FireServer(Blob.RightDetector.RightWeld)
+                    until isnetworkowner(tt.Character.HumanoidRootPart)
+                    task.wait()
+                    tt.Character.Humanoid:ChangeState("Dead")
+                    stvel(HRP)
+                    stvel(Blob.HumanoidRootPart)
+                    Blob.HumanoidRootPart.CFrame = pos
+                end
+            end
+        elseif Method == "Fast Kill" then
             if Blob and Blob.Name == "CreatureBlobman" then
                 local CD,CG = Blob.BlobmanSeatAndOwnerScript.CreatureRelease, Blob.BlobmanSeatAndOwnerScript.CreatureGrab
                 local pos = HRP.CFrame
@@ -2915,6 +2933,24 @@ bOx:AddToggle("ApplyMethodBlob", {
                                     Blob.HumanoidRootPart.CFrame = pos
                                 end
                             end
+                        elseif Method == "Fast Kill" then
+                            if Blob and Blob.Name == "CreatureBlobman" then
+                                local CD,CG = Blob.BlobmanSeatAndOwnerScript.CreatureRelease, Blob.BlobmanSeatAndOwnerScript.CreatureGrab
+                                local pos = HRP.CFrame
+                                if tt.Character and tt.Character:FindFirstChild("HumanoidRootPart") and tt.Character.Humanoid.Health ~= 0 then
+                                    Blob.HumanoidRootPart.CFrame = tt.Character.HumanoidRootPart.CFrame
+                                    task.wait()
+                                    repeat task.wait()
+                                        CG:FireServer(nil, tt.Character.HumanoidRootPart, Blob.RightDetector.RightWeld)
+                                        CD:FireServer(Blob.RightDetector.RightWeld)
+                                    until isnetworkowner(tt.Character.HumanoidRootPart)
+                                    task.wait()
+                                    tt.Character.Humanoid:ChangeState("Dead")
+                                    stvel(HRP)
+                                    stvel(Blob.HumanoidRootPart)
+                                    Blob.HumanoidRootPart.CFrame = pos
+                                end
+                            end
                         end
                     end
                 end
@@ -2960,7 +2996,7 @@ end
 do
 local box = Tabs.Target:AddLeftGroupbox("Selected", "user")
 
-local Box = Tabs.Target:AddRightGroupbox("Method", "target")
+local Box = Tabs.Target:AddRightGroupbox("No Blobman", "target")
 
 local Sets = {
     Name = nil,
@@ -2981,7 +3017,7 @@ GrabTarget = box:AddDropdown("Target", {
 
 Box:AddDropdown("Method", {
     Text = "Method",
-    Values = {"Loop Grab(Kick)", "Loop Grab", "Kill"},
+    Values = {"Loop Grab(Kick)","Fast Grab(Kick)", "Loop Grab", "Kill","Fast Kill"},
     Default = 0,
     Multi = false,
     Callback = function(v)
@@ -3007,7 +3043,94 @@ Box:AddToggle("ApplyMethodGrab", {
                     if tt and tt.Character and tt.Character:FindFirstChild("HumanoidRootPart") and HRP then
                         Sets.Char = tt.Character
                         Sets.HRP = tt.Character.HumanoidRootPart
-                        if Method == "Loop Grab(Kick)" then
+                        if Method == "Fast Grab(Kick)" then
+                            if Sets.Char.Parent ~= workspace then
+                                local pos = HRP.CFrame
+                                local blob = gblob() or inv:FindFirstChild("CreatureBlobman") or spawntoy("CreatureBlobman", HRP.CFrame * CFrame.new(5, 5, 20))
+                                repeat task.wait() until blob and blob:FindFirstChild("RightDetector") and blob:FindFirstChild("VehicleSeat")
+                                blob.Name = "cringe"
+                                if blob then
+                                    repeat task.wait() blob.VehicleSeat:Sit(hum) until hum.SeatPart == blob.VehicleSeat 
+                                    local CG,CD = blob.BlobmanSeatAndOwnerScript.CreatureGrab, blob.BlobmanSeatAndOwnerScript.CreatureRelease
+                                    blob.HumanoidRootPart.CFrame = Sets.HRP.CFrame
+                                    task.wait(0.1)
+                                    repeat
+                                        task.wait()
+                                        CG:FireServer(blob.RightDetector, Sets.HRP, blob.RightDetector.RightWeld)
+                                        CD:FireServer(blob.RightDetector.RightWeld)
+                                    until isnetworkowner(Sets.HRP)
+                                    task.wait(0.2)
+                                    Sets.HRP.CFrame = pos * offset
+                                    HRP.CFrame = pos
+                                    DestroyToy:FireServer(inv:FindFirstChild("cringe"))
+                                    task.wait(0.5)
+                                end
+                            end
+                            if Sets.HRP and hum and HRP then
+                                DestroyLine:FireServer(Sets.HRP)
+                                RunService.RenderStepped:Wait()
+                                SetNetOwner:FireServer(Sets.HRP, Sets.HRP.CFrame)
+                                DestroyLine:FireServer(Sets.HRP)
+                                RunService.RenderStepped:Wait()
+                                SetNetOwner:FireServer(Sets.HRP, Sets.HRP.CFrame)
+                                DestroyLine:FireServer(Sets.HRP)
+                                RunService.RenderStepped:Wait()
+                                SetNetOwner:FireServer(Sets.HRP, Sets.HRP.CFrame)
+                                DestroyLine:FireServer(Sets.HRP)
+                                RunService.RenderStepped:Wait()
+                                SetNetOwner:FireServer(Sets.HRP, Sets.HRP.CFrame)
+                                if (Sets.HRP.Position - HRP.Position).Magnitude >= 29 and Sets.Char.Parent == workspace then
+                                    task.wait(0.1)
+                                    tp(HRP, Sets.HRP)
+                                    task.wait(0.2)
+                                    sno(Sets.HRP)
+                                    task.wait()
+                                    HRP.CFrame = pos
+                                    task.wait(0.2)
+                                    for i,v in pairs(Sets.Char:GetChildren()) do
+                                        if v:IsA("Part") and v.Name ~= "Humanoid" then
+                                            v.CFrame = pos * offset
+                                        end
+                                    end
+                                end
+                                if Sets.HRP.Position.Y < HRP.Position.Y + 4 and Sets.Char.Parent == workspace then
+                                    repeat task.wait() sno(Sets.HRP) until Sets.Char.Head:FindFirstChild("PartOwner")
+                                    HRP.CFrame = pos
+                                    Sets.HRP.CFrame = HRP.CFrame * offset
+                                end
+                                task.spawn(function()
+                                    if Toggles.EnableRagdoll.Value and PalletForRagdoll and inv:FindFirstChild("PalletForRagdoll") then
+                                        PalletForRagdoll.SoundPart.AssemblyLinearVelocity = Vector3.new(0, 2500, 0)
+                                        PalletForRagdoll.SoundPart.CFrame = Sets.HRP.CFrame
+                                        task.wait(0.05)
+                                        PalletForRagdoll.SoundPart.CFrame = HRP.CFrame * CFrame.new(0, 2500, 0)
+                                    end
+                                end)
+                                if not kickbp or kickbp.Parent ~= Sets.HRP then
+                                    kickbp = Instance.new("BodyPosition")
+                                    kickbp.Parent = Sets.HRP
+                                    kickbp.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+                                    kickbp.D = 220
+                                    kickbp.Position = HRP.Position + Vector3.new(0,5,0)
+                                end
+                                if not kickbg or kickbg.Parent ~= Sets.HRP then
+                                    kickbg = Instance.new("BodyGyro")
+                                    kickbg.Parent = Sets.HRP
+                                    kickbg.MaxTorque = Vector3.new(math.huge, math.huge, math.huge)
+                                    kickbp.D = 120
+                                    kickbg.CFrame = CFrame.new(0, 0, 0)
+                                end
+                                task.spawn(function()
+                                    for i,v in Sets.Char:GetChildren() do
+                                        if HasProperty(v, "AssemblyLinearVelocity") then
+                                            stvel(v)
+                                            v.Velocity = Vector3.zero
+                                        end
+                                    end
+                                end)
+                                kickbp.Position = HRP.Position + Vector3.new(offset.X,offset.Y,offset.Z)
+                            end
+                        elseif Method == "Loop Grab(Kick)" then
                             if Sets.Char.Parent ~= workspace then
                                 local pos = HRP.CFrame
                                 local blob = gblob() or inv:FindFirstChild("CreatureBlobman") or spawntoy("CreatureBlobman", HRP.CFrame * CFrame.new(5, 5, 20))
@@ -3057,32 +3180,31 @@ Box:AddToggle("ApplyMethodGrab", {
                                         end
                                     end
                                 end
-                                if Sets.HRP.Position.Y < HRP.Position.Y + 5 and Sets.Char.Parent == workspace then
+                                if Sets.HRP.Position.Y < HRP.Position.Y + 4 and Sets.Char.Parent == workspace then
                                     repeat task.wait() sno(Sets.HRP) until Sets.Char.Head:FindFirstChild("PartOwner")
                                     HRP.CFrame = pos
                                     Sets.HRP.CFrame = HRP.CFrame * offset
                                 end
                                 task.spawn(function()
                                     if Toggles.EnableRagdoll.Value and PalletForRagdoll and inv:FindFirstChild("PalletForRagdoll") then
-                                        PalletForRagdoll.SoundPart.AssemblyLinearVelocity = Vector3.new(0, 2500, 0)
+                                        PalletForRagdoll.SoundPart.AssemblyLinearVelocity = Vector3.new(0, 1000, 0)
                                         PalletForRagdoll.SoundPart.CFrame = Sets.HRP.CFrame
                                         task.wait(0.05)
-                                        PalletForRagdoll.SoundPart.CFrame = HRP.CFrame * CFrame.new(0, 2500, 0)
+                                        PalletForRagdoll.SoundPart.CFrame = HRP.CFrame * CFrame.new(0, 1000, 0)
                                     end
                                 end)
                                 if not kickbp or kickbp.Parent ~= Sets.HRP then
                                     kickbp = Instance.new("BodyPosition")
                                     kickbp.Parent = Sets.HRP
                                     kickbp.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
-                                    kickbp.P = 5000
-                                    kickbp.D = 150
+                                    kickbp.D = 200
                                     kickbp.Position = HRP.Position + Vector3.new(0,5,0)
                                 end
                                 if not kickbg or kickbg.Parent ~= Sets.HRP then
                                     kickbg = Instance.new("BodyGyro")
                                     kickbg.Parent = Sets.HRP
                                     kickbg.MaxTorque = Vector3.new(math.huge, math.huge, math.huge)
-                                    kickbp.D = 120
+                                    kickbp.D = 100
                                     kickbg.CFrame = CFrame.new(0, 0, 0)
                                 end
                                 task.spawn(function()
@@ -3151,8 +3273,42 @@ Box:AddToggle("ApplyMethodGrab", {
                                 DestroyLine:FireServer(Sets.HRP)
                                 HRP.CFrame = pos
                             end
+                        elseif Method == "Fast Kill" then
+                            if Sets.Char.Parent ~= workspace then
+                                local pos = HRP.CFrame
+                                local blob = gblob() or inv:FindFirstChild("CreatureBlobman") or spawntoy("CreatureBlobman", HRP.CFrame * CFrame.new(5, 5, 20))
+                                repeat task.wait() until blob and blob:FindFirstChild("RightDetector") and blob:FindFirstChild("VehicleSeat")
+                                blob.Name = "cringe"
+                                if blob then
+                                    repeat task.wait() blob.VehicleSeat:Sit(hum) until hum.SeatPart == blob.VehicleSeat 
+                                    local CG,CD = blob.BlobmanSeatAndOwnerScript.CreatureGrab, blob.BlobmanSeatAndOwnerScript.CreatureRelease
+                                    blob.HumanoidRootPart.CFrame = Sets.HRP.CFrame
+                                    task.wait(0.2)
+                                    repeat
+                                        task.wait()
+                                        CG:FireServer(blob.RightDetector, Sets.HRP, blob.RightDetector.RightWeld)
+                                        CD:FireServer(blob.RightDetector.RightWeld)
+                                    until isnetworkowner(Sets.HRP)
+                                    task.wait(0.2)
+                                    Sets.HRP.CFrame = pos * offset
+                                    HRP.CFrame = pos
+                                    DestroyToy:FireServer(inv:FindFirstChild("cringe"))
+                                    task.wait(0.5)
+                                end
+                            end
+                            if Sets.HRP and hum and HRP and Sets.Char.Parent == workspace and Sets.Char.Humanoid.Health ~= 0 and Sets.Char.Torso:FindFirstChild("Neck") then
+                                local pos = HRP.CFrame
+                                HRP.CFrame = Sets.HRP.CFrame
+                                repeat task.wait()
+                                    sno(Sets.HRP)
+                                until Sets.Char.Head:FindFirstChild("PartOwner") and isnetworkowner(Sets.HRP)
+                                Sets.Char.Humanoid:ChangeState("Dead")
+                                DestroyLine:FireServer(Sets.HRP)
+                                HRP.CFrame = pos
+                            end
                         elseif Method ~= "Loop Grab(Kick)" then
-                            if Sets.HRP:FindFirstChild("BodyPosition") then Sets.HRP.BodyPosition:Destroy() end
+                            if Sets.HRP:FindFirstChild("BodyPosition") then Sets.HRP.BodyPosition:Destroy() 
+                            end
                         end
                     end
                 end
