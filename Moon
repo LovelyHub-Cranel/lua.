@@ -2689,7 +2689,7 @@ end
 do
 local box = Tabs.Blobman:AddLeftGroupbox("Selected", "user")
 
-local bOx = Tabs.Blobman:AddRightGroupbox("Blobman", "target")
+local bOx = Tabs.Blobman:AddRightGroupbox("Method", "target")
 
 local boX = Tabs.Blobman:AddLeftGroupbox("Settings", "wrench")
 
@@ -2958,7 +2958,7 @@ boX:AddToggle("EnableBlobmanAntiKick", {
 end
 
 do
-local box = Tabs.Target:AddLeftGroupbox("No Blobman", "user")
+local box = Tabs.Target:AddLeftGroupbox("Selected", "user")
 
 local Box = Tabs.Target:AddRightGroupbox("Method", "target")
 
