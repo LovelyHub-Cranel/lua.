@@ -28,7 +28,7 @@ local Toggles = {}
 local Options = {}
 local Tooltips = {}
 
-local BaseURL = "Lovely.Main"
+local BaseURL = "Obsidian.Main"
 local CustomImageManager = {}
 local CustomImageManagerAssets = {
     TransparencyTexture = {
