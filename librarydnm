@@ -314,7 +314,7 @@ local Templates = {
         Resizable = true,
         SearchbarSize = UDim2.fromScale(1, 1),
         GlobalSearch = false,
-        CornerRadius = 10,
+        CornerRadius = 20,
         NotifySide = "Right",
         ShowCustomCursor = true,
         Font = Enum.Font.Code,
@@ -1217,7 +1217,7 @@ do
     Cursor = New("Frame", {
         AnchorPoint = Vector2.new(0.5, 0.5),
         BackgroundColor3 = "WhiteColor",
-        Size = UDim2.fromOffset(9, 2),
+        Size = UDim2.fromOffset(9, 1),
         Visible = false,
         ZIndex = 11000,
         Parent = ScreenGui,
@@ -1235,7 +1235,7 @@ do
         AnchorPoint = Vector2.new(0.5, 0.5),
         BackgroundColor3 = "WhiteColor",
         Position = UDim2.fromScale(0.5, 0.5),
-        Size = UDim2.fromOffset(2, 9),
+        Size = UDim2.fromOffset(1, 9),
         ZIndex = 11000,
         Parent = Cursor,
     })
